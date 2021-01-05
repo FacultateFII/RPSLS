@@ -3,7 +3,7 @@ import select
 
 if __name__ == '__main__':
     sServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sServer.bind(('localhost', 20001))
+    sServer.bind(('localhost', 20002))
     sServer.setblocking(False)
     sServer.listen(3)
     inputs = [sServer]
@@ -40,8 +40,7 @@ if __name__ == '__main__':
             if not choices[client]:
                 outputs.remove(client)
             else:
-                client.send(bytes(str(choices[client]), 'utf-8'))
-
+                client.send(bytes(1))
 
         for client in exceptSocks:
             inputs.remove(client)
@@ -50,6 +49,7 @@ if __name__ == '__main__':
             client.close()
             del choices[client]
 
-        command = input('No new actions for the past 60s. Quit? (yes/no)\n')
-        if command == 'yes':
-            quitCommand = True 
+        if not inputs:
+            command = input('No new actions for the past 5 minutes. Quit? (yes/no)\n')
+            if command == 'yes':
+                quitCommand = True
