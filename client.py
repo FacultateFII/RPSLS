@@ -40,7 +40,7 @@ def winLose(computerChoice):
 
 if __name__ == '__main__':
     sClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sClient.connect(('localhost', 20002))
+    sClient.connect(('localhost', 20003))
     try:
         print("Welcome to Rock, Paper, Scissors, Lizard, Spock!")
         choice = input("Enter your choice: ")

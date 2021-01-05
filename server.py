@@ -55,7 +55,7 @@ def RPSLS(choice):
 
 if __name__ == '__main__':
     sServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sServer.bind(('localhost', 20002))
+    sServer.bind(('localhost', 20003))
     sServer.setblocking(False)
     sServer.listen(3)
     inputs = [sServer]
@@ -73,8 +73,8 @@ if __name__ == '__main__':
                 print("Client connected from: ", clientAddress)
             else:
                 c = sock.recv(30)
-                choice = int(str(c, 'utf8'))
-                if choice:
+                if c:
+                    choice = int(str(c, 'utf8'))
                     choices[sock] = choice
                     if sock not in outputs:
                         outputs.append(sock)
@@ -85,16 +85,15 @@ if __name__ == '__main__':
                     sock.close()
                     del choices[sock]
 
-        for client in writeSocks:
-            computerChoice = RPSLS(choices[client])
-            if not choices[client]:
-                outputs.remove(client)
-            else:
-                client.send(bytes(computerChoice, 'utf8'))
+        for sock in writeSocks:
+            if choices[sock]:
+                computerChoice = RPSLS(choices[sock])
+                sock.send(bytes(computerChoice, 'utf8'))
+                outputs.remove(sock)
 
-        for client in exceptSocks:
-            inputs.remove(client)
-            if client in outputs:
-                outputs.remove(client)
-            client.close()
-            del choices[client]
+        for sock in exceptSocks:
+            inputs.remove(sock)
+            if sock in outputs:
+                outputs.remove(sock)
+            sock.close()
+            del choices[sock]
