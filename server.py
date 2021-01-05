@@ -40,7 +40,7 @@ if __name__ == '__main__':
             if not choices[client]:
                 outputs.remove(client)
             else:
-                client.send(bytes(1))
+                client.send(bytes('2w', 'utf8'))
 
         for client in exceptSocks:
             inputs.remove(client)

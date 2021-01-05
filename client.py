@@ -1,5 +1,4 @@
 import socket
-import sys
 
 def parseChoice(choice):
     if choice == 'rock':
@@ -26,24 +25,31 @@ def parseComputerChoice(computerChoice):
         return 'lizard'
     elif computerChoice == 5:
         return 'spock'
+    else:
+        return 'error'
+
+def winLose(computerChoice):
+    if computerChoice == 'w':
+        print("You win!")
+    elif computerChoice == 'l':
+        print("You lose!")
+    else:
+        print("Error")
 
 if __name__ == '__main__':
     sClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sClient.connect(('localhost', 20001))
     sClient.connect(('localhost', 20002))
     try:
-        print("Welcome!")
-        choice = input("Enter your choice")
-        sClient.send(bytes(choice, 'utf-8'))
         print("Welcome to Rock, Paper, Scissors, Lizard, Spock!")
         choice = input("Enter your choice: ")
         if parseChoice(choice) == 0:
             while parseChoice(choice) == 0:
                 print("This is not a valid choice.")
                 choice = input("Please enter another choice: ")
-        sClient.send(bytes(parseChoice(choice)))
+        sClient.send(bytes(str(parseChoice(choice)), 'utf8'))
+        #print(bytes.decode(bytes(str(parseChoice(choice)), 'utf8'), 'utf8'))
         computerChoice = sClient.recv(30)
-        print(computerChoice)
-        print("Computer chose", parseComputerChoice(bytes.decode(computerChoice)))
+        print("Computer chose", parseComputerChoice(int(str(computerChoice, 'utf8')[0])))
+        winLose(str(computerChoice, 'utf8')[1])
     finally:
         sClient.close()
