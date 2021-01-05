@@ -40,7 +40,7 @@ def winLose(computerChoice):
 
 if __name__ == '__main__':
     sClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sClient.connect(('localhost', 20003))
+    sClient.connect(('localhost', 20005))
     try:
         print("Welcome to Rock, Paper, Scissors, Lizard, Spock!")
         choice = input("Enter your choice: ")
@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 print("This is not a valid choice.")
                 choice = input("Please enter another choice: ")
         sClient.send(bytes(str(parseChoice(choice)), 'utf8'))
-        #print(bytes.decode(bytes(str(parseChoice(choice)), 'utf8'), 'utf8'))
+        print("Waiting for server to respond...")
         computerChoice = sClient.recv(30)
         print("Computer chose", parseComputerChoice(int(str(computerChoice, 'utf8')[0])))
         winLose(str(computerChoice, 'utf8')[1])

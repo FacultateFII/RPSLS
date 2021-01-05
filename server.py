@@ -1,3 +1,6 @@
+# quit command in server TODO
+# clients able to rematch TODO
+
 import socket
 import select
 import random
@@ -55,22 +58,28 @@ def RPSLS(choice):
 
 if __name__ == '__main__':
     sServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sServer.bind(('localhost', 20003))
+    sServer.bind(('localhost', 20005))
     sServer.setblocking(False)
     sServer.listen(3)
     inputs = [sServer]
     outputs = []
     choices = {}
+    clientsNumber = 0
 
     while inputs:
         readSocks, writeSocks, exceptSocks = select.select(inputs, outputs, inputs, 300)
 
         for sock in readSocks:
             if sock is sServer:
-                sClient, clientAddress = sServer.accept()
-                sClient.setblocking(False)
-                inputs.append(sClient)
-                print("Client connected from: ", clientAddress)
+                if clientsNumber < 3:
+                    sServer.setblocking(False)
+                    sClient, clientAddress = sServer.accept()
+                    sClient.setblocking(False)
+                    inputs.append(sClient)
+                    clientsNumber += 1
+                    print("Client connected from: ", clientAddress)
+                else:
+                    sServer.setblocking(True)
             else:
                 c = sock.recv(30)
                 if c:
@@ -84,6 +93,7 @@ if __name__ == '__main__':
                     inputs.remove(sock)
                     sock.close()
                     del choices[sock]
+                    clientsNumber -= 1
 
         for sock in writeSocks:
             if choices[sock]:
@@ -97,3 +107,4 @@ if __name__ == '__main__':
                 outputs.remove(sock)
             sock.close()
             del choices[sock]
+            clientsNumber -= 1
