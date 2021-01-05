@@ -1,6 +1,3 @@
-# quit command in server TODO
-# clients able to rematch TODO
-
 import socket
 import select
 import random
@@ -55,8 +52,8 @@ def RPSLS(choice):
     else:
         return '0a'
 
-
 if __name__ == '__main__':
+    print("Press q to quit")
     sServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sServer.bind(('localhost', 20005))
     sServer.setblocking(False)
@@ -67,7 +64,7 @@ if __name__ == '__main__':
     clientsNumber = 0
 
     while inputs:
-        readSocks, writeSocks, exceptSocks = select.select(inputs, outputs, inputs, 300)
+        readSocks, writeSocks, exceptSocks = select.select(inputs, outputs, inputs)
 
         for sock in readSocks:
             if sock is sServer:

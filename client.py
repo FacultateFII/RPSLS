@@ -43,15 +43,18 @@ if __name__ == '__main__':
     sClient.connect(('localhost', 20005))
     try:
         print("Welcome to Rock, Paper, Scissors, Lizard, Spock!")
-        choice = input("Enter your choice: ")
-        if parseChoice(choice) == 0:
-            while parseChoice(choice) == 0:
-                print("This is not a valid choice.")
-                choice = input("Please enter another choice: ")
-        sClient.send(bytes(str(parseChoice(choice)), 'utf8'))
-        print("Waiting for server to respond...")
-        computerChoice = sClient.recv(30)
-        print("Computer chose", parseComputerChoice(int(str(computerChoice, 'utf8')[0])))
-        winLose(str(computerChoice, 'utf8')[1])
+        yn = 'yes'
+        while yn == 'yes':
+            choice = input("Enter your choice: ")
+            if parseChoice(choice) == 0:
+                while parseChoice(choice) == 0:
+                    print("This is not a valid choice.")
+                    choice = input("Please enter another choice: ")
+            sClient.send(bytes(str(parseChoice(choice)), 'utf8'))
+            print("Waiting for server to respond...")
+            computerChoice = sClient.recv(30)
+            print("Computer chose", parseComputerChoice(int(str(computerChoice, 'utf8')[0])))
+            winLose(str(computerChoice, 'utf8')[1])
+            yn = input("Rematch?\n")
     finally:
         sClient.close()
