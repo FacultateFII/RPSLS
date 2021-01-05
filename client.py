@@ -33,6 +33,8 @@ def winLose(computerChoice):
         print("You win!")
     elif computerChoice == 'l':
         print("You lose!")
+    elif computerChoice == 't':
+        print("It's a tie!")
     else:
         print("Error")
 

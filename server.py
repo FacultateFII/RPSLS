@@ -1,5 +1,57 @@
 import socket
 import select
+import random
+
+def RPSLS(choice):
+    computerChoice = random.randint(1, 5)
+    if computerChoice == 1:
+        if choice == 1:
+            return '1t'
+        elif choice == 2 or choice == 5:
+            return '1w'
+        elif choice == 3 or choice == 4:
+            return '1l'
+        else:
+            return '0a'
+    elif computerChoice == 2:
+        if choice == 2:
+            return '2t'
+        elif choice == 3 or choice == 4:
+            return '2w'
+        elif choice == 1 or choice == 5:
+            return '2l'
+        else:
+            return '0a'
+    elif computerChoice == 3:
+        if choice == 3:
+            return '3t'
+        elif choice == 1 or choice == 5:
+            return '3w'
+        elif choice == 2 or choice == 4:
+            return '3l'
+        else:
+            return '0a'
+    elif computerChoice == 4:
+        if choice == 4:
+            return '4t'
+        elif choice == 1 or choice == 3:
+            return '4w'
+        elif choice == 2 or choice == 5:
+            return '4l'
+        else:
+            return '0a'
+    elif computerChoice == 5:
+        if choice == 5:
+            return '5t'
+        elif choice == 2 or choice == 4:
+            return '5w'
+        elif choice == 1 or choice == 3:
+            return '5l'
+        else:
+            return '0a'
+    else:
+        return '0a'
+
 
 if __name__ == '__main__':
     sServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -10,8 +62,7 @@ if __name__ == '__main__':
     outputs = []
     choices = {}
 
-    quitCommand = False
-    while not quitCommand:
+    while inputs:
         readSocks, writeSocks, exceptSocks = select.select(inputs, outputs, inputs, 300)
 
         for sock in readSocks:
@@ -21,8 +72,8 @@ if __name__ == '__main__':
                 inputs.append(sClient)
                 print("Client connected from: ", clientAddress)
             else:
-                choice = sock.recv(30)
-                print(choice)
+                c = sock.recv(30)
+                choice = int(str(c, 'utf8'))
                 if choice:
                     choices[sock] = choice
                     if sock not in outputs:
@@ -35,12 +86,11 @@ if __name__ == '__main__':
                     del choices[sock]
 
         for client in writeSocks:
-            #generate computer choice and send
-            #RSPS and send
+            computerChoice = RPSLS(choices[client])
             if not choices[client]:
                 outputs.remove(client)
             else:
-                client.send(bytes('2w', 'utf8'))
+                client.send(bytes(computerChoice, 'utf8'))
 
         for client in exceptSocks:
             inputs.remove(client)
@@ -48,8 +98,3 @@ if __name__ == '__main__':
                 outputs.remove(client)
             client.close()
             del choices[client]
-
-        if not inputs:
-            command = input('No new actions for the past 5 minutes. Quit? (yes/no)\n')
-            if command == 'yes':
-                quitCommand = True
